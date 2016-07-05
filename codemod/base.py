@@ -279,6 +279,20 @@ def _ask_about_patch(patch, editor, default_no):
     if p in 'q':
         sys.exit(0)
 
+try:
+    from msvcrt import getch
+except ImportError:
+    import tty
+    import termios
+    def getch():
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+
+        try:
+            tty.setraw(fd)
+            return sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 def _prompt(letters='yn', default=None):
     """
@@ -289,7 +303,7 @@ def _prompt(letters='yn', default=None):
     """
     while True:
         try:
-            input_text = sys.stdin.readline().strip()
+            input_text = getch()
         except KeyboardInterrupt:
             sys.exit(0)
         if input_text and input_text in letters:
