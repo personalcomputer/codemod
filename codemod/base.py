@@ -241,15 +241,17 @@ def _ask_about_patch(patch, editor, default_no):
     global yes_to_all
 
     default_action = 'n' if default_no else 'y'
-    terminal.terminal_clear()
-    terminal.terminal_print('%s\n' % patch.render_range(), color='WHITE')
-    print()
+    if not yes_to_all:
+        terminal.terminal_clear()
+        terminal.terminal_print('%s\n' % patch.render_range(), color='WHITE')
+        print()
 
     lines = list(open(patch.path))
     size = list(terminal.terminal_get_size())
-    print_patch(patch, size[0] - 20, lines)
+    if not yes_to_all:
+        print_patch(patch, size[0] - 20, lines)
 
-    print()
+        print()
 
     if patch.new_lines is not None:
         if not yes_to_all:
